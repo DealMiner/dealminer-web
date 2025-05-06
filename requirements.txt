@@ -1,4 +1,4 @@
 streamlit
 python-telegram-bot
 openpyxl
-pandas
+pandas==2.2.3
