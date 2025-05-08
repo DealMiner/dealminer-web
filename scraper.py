@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import random
+import re
 
 # Liste de mots-clés rares ou collectionnables
 MOTS_RARES = [
@@ -53,7 +54,6 @@ def scrape_data(url):
 
 # Tentative de détection du prix dans le texte
 def detecter_prix(texte):
-    import re
     prix = re.findall(r"\d{1,4}(?:[.,]\d{1,2})?\s?(?:€|eur|euros)", texte)
     if prix:
         nombre = re.findall(r"\d{1,4}(?:[.,]\d{1,2})?", prix[0])[0]
@@ -63,3 +63,4 @@ def detecter_prix(texte):
 # Détection de rareté
 def detecter_rarete(texte):
     return sum(1 for mot in MOTS_RARES if mot in texte) * 10  # max 100
+
