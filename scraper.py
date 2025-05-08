@@ -17,7 +17,7 @@ def estimer_prix_revente(prix_actuel, rarete):
 # Fonction principale
 def scrape_data(url):
     try:
-        headers = {"User-Agent": "Mozilla/5.0"}
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
         r = requests.get(url, headers=headers, timeout=10)
 
         if r.status_code != 200:
@@ -63,4 +63,3 @@ def detecter_prix(texte):
 # Détection de rareté
 def detecter_rarete(texte):
     return sum(1 for mot in MOTS_RARES if mot in texte) * 10  # max 100
-
