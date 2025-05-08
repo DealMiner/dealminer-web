@@ -2,24 +2,26 @@ import streamlit as st
 import pandas as pd
 from scraper import scrape_data
 from image_analysis import run_image_analysis
+from profit_score import run_profit_score
 
 # Configuration de la page
 st.set_page_config(page_title="DealMiner Web", layout="wide")
 st.title("🪙 DealMiner - Détection de Bonnes Affaires")
 
-# Initialisation des résultats en mémoire
+# Initialisation mémoire
 if "results" not in st.session_state:
     st.session_state["results"] = []
 
-# Menu de navigation
+# Menu latéral
 menu = st.sidebar.radio("Navigation", [
     "🔍 Détection",
     "📊 Résultats",
     "📁 Export",
-    "🖼️ Analyse d’image"
+    "🖼️ Analyse d’image",
+    "💰 Rentabilité"
 ])
 
-# Onglet : Détection
+# 1. Détection
 if menu == "🔍 Détection":
     st.header("🔍 Détection d'une annonce")
     url = st.text_input("Entrez l'URL d'une annonce à analyser")
@@ -30,7 +32,7 @@ if menu == "🔍 Détection":
             st.session_state["results"] = results
             st.success(f"{len(results)} élément(s) détecté(s)")
 
-# Onglet : Résultats
+# 2. Résultats
 elif menu == "📊 Résultats":
     st.header("📊 Résultats")
     if st.session_state["results"]:
@@ -39,7 +41,7 @@ elif menu == "📊 Résultats":
     else:
         st.info("Aucun résultat disponible. Lancez une détection dans l'onglet précédent.")
 
-# Onglet : Export
+# 3. Export
 elif menu == "📁 Export":
     st.header("📁 Export des résultats")
     if st.session_state["results"]:
@@ -49,6 +51,11 @@ elif menu == "📁 Export":
     else:
         st.info("Aucun résultat à exporter.")
 
-# Onglet : Analyse d’image
+# 4. Analyse image
 elif menu == "🖼️ Analyse d’image":
     run_image_analysis()
+
+# 5. Rentabilité
+elif menu == "💰 Rentabilité":
+    run_profit_score()
+
