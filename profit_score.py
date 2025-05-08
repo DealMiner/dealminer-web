@@ -28,5 +28,5 @@ def run_profit_score():
         st.write(f"🧾 Bénéfice net estimé : **{benefice_net:.2f} €**")
         st.write(f"📈 Marge : **{marge_pct:.1f} %**")
         st.success(f"Score de rentabilité : **{score} / 100**")
-    elif st.button("Calculer la rentabilité"):
+    elif st.button("Calculer la rentabilité", key="btn_profit_calc"):
         st.warning("Veuillez saisir un prix de revente supérieur à zéro.")
