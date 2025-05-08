@@ -5,26 +5,42 @@ import os
 RESULTS_FILE = "results.csv"
 
 def run_export_tools():
-    st.header("📁 Export & Suivi")
-    
-    if not os.path.exists(RESULTS_FILE):
-        st.info("Aucun fichier de résultats trouvé.")
+    st.header("📁 Export & Sauvegarde des trouvailles")
+
+    # Priorité aux résultats en session
+    if "results" in st.session_state and st.session_state["results"]:
+        df = pd.DataFrame(st.session_state["results"])
+    elif os.path.exists(RESULTS_FILE):
+        df = pd.read_csv(RESULTS_FILE)
+    else:
+        st.info("Aucun résultat disponible à exporter.")
         return
 
-    df = pd.read_csv(RESULTS_FILE)
+    st.write("📄 Aperçu des résultats à exporter :")
+    st.dataframe(df, use_container_width=True)
 
-    # 📥 Téléchargement en CSV
+    # Export CSV
+    csv = df.to_csv(index=False).encode('utf-8')
     st.download_button(
-        label="Télécharger en CSV",
-        data=df.to_csv(index=False).encode('utf-8'),
-        file_name="resultats.csv",
+        label="⬇️ Télécharger au format CSV",
+        data=csv,
+        file_name="dealminer_resultats.csv",
         mime="text/csv"
     )
 
-    # 📥 Téléchargement en Excel (si tu veux aussi cette option)
-    st.download_button(
-        label="Télécharger en Excel",
-        data=df.to_excel(index=False, engine='openpyxl'),
-        file_name="resultats.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+    # Export Excel
+    try:
+        excel = df.to_excel(index=False, engine='openpyxl')
+        st.download_button(
+            label="⬇️ Télécharger au format Excel",
+            data=excel,
+            file_name="dealminer_resultats.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+    except Exception as e:
+        st.warning("⚠️ Impossible d’exporter en Excel (vérifiez les dépendances).")
+
+    # Sauvegarde persistante locale
+    if st.button("💾 Enregistrer localement (results.csv)", key="save_results_file"):
+        df.to_csv(RESULTS_FILE, index=False)
+        st.success("Résultats enregistrés dans le fichier `results.csv`")
