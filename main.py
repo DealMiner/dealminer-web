@@ -1,8 +1,11 @@
 import streamlit as st
 import pandas as pd
 from scraper import scrape_data
+from result_viewer import run_result_viewer
+from export_tools import run_export_tools
 from image_analysis import run_image_analysis
 from profit_score import run_profit_score
+
 
 # Configuration de la page
 st.set_page_config(page_title="DealMiner Web", layout="wide")
