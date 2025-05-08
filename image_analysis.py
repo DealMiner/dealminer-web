@@ -1,14 +1,26 @@
+import streamlit as st
 from PIL import Image
+import numpy as np
 
-# Fonction pour charger et afficher une image
-def analyze_image(image_path):
-    # Ouvre l'image
-    image = Image.open(image_path)
-    
-    # Affiche l'image
-    image.show()
+def run_image_analysis():
+    st.subheader("🖼️ Analyse d'image - État estimé de l'objet")
+    uploaded_file = st.file_uploader("📸 Téléversez une photo de l'objet", type=["jpg", "jpeg", "png"])
 
-# Exemple d'utilisation
-if __name__ == "__main__":
-    image_path = "path/to/your/image.jpg"
-    analyze_image(image_path)
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Image importée", use_column_width=True)
+
+        # Convertir l’image en niveaux de gris
+        grayscale = np.array(image.convert("L"))
+        avg_brightness = np.mean(grayscale)
+
+        # Évaluation simple de l’état selon la luminosité moyenne
+        if avg_brightness > 160:
+            etat = "✨ Très bon état"
+        elif avg_brightness > 100:
+            etat = "🟡 État moyen"
+        else:
+            etat = "🔴 État faible"
+
+        st.write(f"💡 Luminosité moyenne : {avg_brightness:.1f}")
+        st.success(f"État estimé de l'objet : {etat}")
