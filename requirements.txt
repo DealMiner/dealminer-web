@@ -1,5 +1,6 @@
 streamlit
-python-telegram-bot
-openpyxl
-pandas==2.2.3
 beautifulsoup4
+requests
+pandas
+openpyxl
+Pillow
