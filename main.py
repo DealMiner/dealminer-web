@@ -17,6 +17,17 @@ if "results" not in st.session_state:
 if "last_result" not in st.session_state:
     st.session_state["last_result"] = None
 
+# 🧠 Règle : plafonnement pour cartes non gradées si pas "Mint"
+def ajuster_prix_si_carte_non_gradée(objet, etat, prix_estime):
+    if (
+        "carte" in objet.lower()
+        and any(kw in objet.lower() for kw in ["pokemon", "magic", "yu-gi-oh"])
+        and "non gradée" in etat.lower()
+        and "mint" not in etat.lower()
+    ):
+        return min(prix_estime, 30)
+    return prix_estime
+
 # Menu latéral
 menu = st.sidebar.radio("🧭 Navigation", [
     "🔍 Nouvelle détection",
@@ -26,7 +37,7 @@ menu = st.sidebar.radio("🧭 Navigation", [
     "💰 Rentabilité"
 ])
 
-# Onglet 1 : Détection d'annonce
+# 🔍 Onglet 1 : Détection d'annonce
 if menu == "🔍 Nouvelle détection":
     st.header("🔍 Analyse d'une annonce en ligne")
     url = st.text_input("📎 Colle ici l'URL d'une annonce")
@@ -35,6 +46,15 @@ if menu == "🔍 Nouvelle détection":
         with st.spinner("🔎 Analyse en cours..."):
             result = scrape_data(url)
             if result:
+                objet = result.get("Objet", "")
+                etat = result.get("Qualité estimée", "")
+                prix_estime = result.get("Prix conseillé à la revente (€)", 0)
+
+                # Appliquer la règle de plafonnement
+                result["Prix conseillé à la revente (€)"] = ajuster_prix_si_carte_non_gradée(
+                    objet, etat, prix_estime
+                )
+
                 st.session_state["results"].append(result)
                 st.session_state["last_result"] = result
                 st.success("✅ Annonce analysée avec succès")
@@ -42,18 +62,18 @@ if menu == "🔍 Nouvelle détection":
             else:
                 st.error("❌ Aucune donnée récupérée. Vérifie l'URL.")
 
-# Onglet 2 : Visualisation des résultats
+# 📊 Onglet 2 : Résultats
 elif menu == "📊 Résultats":
     run_result_viewer()
 
-# Onglet 3 : Export CSV/Excel
+# 📁 Onglet 3 : Export
 elif menu == "📁 Export":
     run_export_tools()
 
-# Onglet 4 : Analyse d’image
+# 🖼️ Onglet 4 : Analyse d’image
 elif menu == "🖼️ Analyse d’image":
     run_image_analysis()
 
-# Onglet 5 : Calcul de rentabilité
+# 💰 Onglet 5 : Rentabilité
 elif menu == "💰 Rentabilité":
     run_profit_score()
